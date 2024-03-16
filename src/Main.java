@@ -3,7 +3,9 @@ import controller.NasabahController;
 import models.AdminModel;
 import models.LaporanModel;
 import models.NasabahModel;
+import models.TransactionAbortModel;
 import models.TransactionModel;
+import models.TransactionType;
 
 import java.util.Scanner;
 
@@ -16,29 +18,31 @@ public class Main {
         AdminController admin = new AdminController();
         NasabahController nasabahController = new NasabahController();
 
-        // Inisialisasi daftar nasabah
-        NasabahModel nasabah1 = new NasabahModel("John Doe", "123456", "1234", 1000);
-        NasabahModel nasabah2 = new NasabahModel("Jane Doe", "654321", "4321", 2000);
+        nasabahList.add(new NasabahModel("John Doe", "1234567890", "1234", 1000.0));
+        nasabahList.add(new NasabahModel("Jane Smith", "2345678901", "5678", 2000.0));
+        nasabahList.add(new NasabahModel("Alice Johnson", "3456789012", "9012", 3000.0));
+        nasabahList.add(new NasabahModel("Bob Brown", "4567890123", "3456", 4000.0));
+        nasabahList.add( new NasabahModel("Emily Davis", "5678901234", "7890", 5000.0));
+        nasabahList.add(new NasabahModel("Michael Wilson", "6789012345", "2345", 6000.0));
+        nasabahList.add(new NasabahModel("Sarah Martinez", "7890123456", "6789", 7000.0));
 
+          // Membuat objek TransactionModel untuk semua nasabah
+        TransactionModel transaction1 = new TransactionModel(TransactionType.DEPOSIT, nasabah1.getAccountNumber(), 500.0);
+        TransactionModel transaction2 = new TransactionModel(TransactionType.WITHDRAW, nasabah2.getAccountNumber(), 100.0);
+        TransactionModel transaction3 = new TransactionModel(TransactionType.TRANSFER, nasabah3.getAccountNumber(), 200.0);
+        TransactionModel transaction4 = new TransactionModel(TransactionType.DEPOSIT, nasabah4.getAccountNumber(), 300.0);
+        TransactionModel transaction5 = new TransactionModel(TransactionType.WITHDRAW, nasabah5.getAccountNumber(), 400.0);
+        TransactionModel transaction6 = new TransactionModel(TransactionType.TRANSFER, nasabah6.getAccountNumber(), 600.0);
+        TransactionModel transaction7 = new TransactionModel(TransactionType.DEPOSIT, nasabah7.getAccountNumber(), 700.0);
 
-        LaporanModel laporan3 = new LaporanModel("Batalkan Trasaksi", "654321", "123456", "Laporan 3", 100.0);
-        LaporanModel laporan4 = new LaporanModel("Batalkan Trasaksi", "123456", "654321", "Laporan 4", 200.0);
-
-        TransactionModel transaction1 = new TransactionModel(TransactionModel.WITHDRAW, "123456", 100.0);
-        TransactionModel transaction2 = new TransactionModel(TransactionModel.RECEIVED, "654321", 100.0);
-        TransactionModel transaction3 = new TransactionModel(TransactionModel.WITHDRAW, "654321", 100.0);
-
-        transactionList.add(transaction1);
-        transactionList.add(transaction2);
-        transactionList.add(transaction3);
-
-        laporanList.add(laporan3);
-        laporanList.add(laporan4);
-
-        nasabahList.add(nasabah1);
-        nasabahList.add(nasabah2);
-        System.out.println(nasabahList.size());
-
+        // Membuat objek TransactionAbortModel untuk semua nasabah
+        TransactionAbortModel abort1 = new TransactionAbortModel("Abort Transaction", nasabah1.getAccountNumber(), nasabah2.getAccountNumber(), "Abort withdrawal transaction", transaction1);
+        TransactionAbortModel abort2 = new TransactionAbortModel("Abort Transaction", nasabah2.getAccountNumber(), nasabah3.getAccountNumber(), "Abort transfer transaction", transaction2);
+        TransactionAbortModel abort3 = new TransactionAbortModel("Abort Transaction", nasabah3.getAccountNumber(), nasabah4.getAccountNumber(), "Abort withdrawal transaction", transaction3);
+        TransactionAbortModel abort4 = new TransactionAbortModel("Abort Transaction", nasabah4.getAccountNumber(), nasabah5.getAccountNumber(), "Abort deposit transaction", transaction4);
+        TransactionAbortModel abort5 = new TransactionAbortModel("Abort Transaction", nasabah5.getAccountNumber(), nasabah6.getAccountNumber(), "Abort transfer transaction", transaction5);
+        TransactionAbortModel abort6 = new TransactionAbortModel("Abort Transaction", nasabah6.getAccountNumber(), nasabah7.getAccountNumber(), "Abort withdrawal transaction", transaction6);
+        TransactionAbortModel abort7 = new TransactionAbortModel("Abort Transaction", nasabah7.getAccountNumber(), nasabah1.getAccountNumber(), "Abort transfer transaction", transaction7);
 
         Scanner scanner = new Scanner(System.in);
 

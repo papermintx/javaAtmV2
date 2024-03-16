@@ -1,13 +1,13 @@
 package models;
 
-public class LaporanModel {
+public class NotificationModel {
+    
     private final String accountNumber;
-    private final String title;
+    private final String title = "Notification";
     private final String content;
 
-    public LaporanModel(String accountNumber, String title, String content) {
+    public NotificationModel(String accountNumber, String content) {
         this.accountNumber = accountNumber;
-        this.title = title;
         this.content = content;
     }
 
@@ -23,4 +23,3 @@ public class LaporanModel {
         return content;
     }
 }
-
