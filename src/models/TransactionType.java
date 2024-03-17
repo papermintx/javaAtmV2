@@ -5,5 +5,4 @@ public enum TransactionType {
     TRANSFER,
     RECEIVED,
     DEPOSIT,
-    CANCEL
 }

@@ -1,5 +1,6 @@
 import controller.AdminController;
 import controller.NasabahController;
+import models.AbortTransactionStatus;
 import models.AdminModel;
 import models.LaporanModel;
 import models.NasabahModel;
@@ -26,23 +27,22 @@ public class Main {
         nasabahList.add(new NasabahModel("Michael Wilson", "6789012345", "2345", 6000.0));
         nasabahList.add(new NasabahModel("Sarah Martinez", "7890123456", "6789", 7000.0));
 
-          // Membuat objek TransactionModel untuk semua nasabah
-        TransactionModel transaction1 = new TransactionModel(TransactionType.DEPOSIT, nasabah1.getAccountNumber(), 500.0);
-        TransactionModel transaction2 = new TransactionModel(TransactionType.WITHDRAW, nasabah2.getAccountNumber(), 100.0);
-        TransactionModel transaction3 = new TransactionModel(TransactionType.TRANSFER, nasabah3.getAccountNumber(), 200.0);
-        TransactionModel transaction4 = new TransactionModel(TransactionType.DEPOSIT, nasabah4.getAccountNumber(), 300.0);
-        TransactionModel transaction5 = new TransactionModel(TransactionType.WITHDRAW, nasabah5.getAccountNumber(), 400.0);
-        TransactionModel transaction6 = new TransactionModel(TransactionType.TRANSFER, nasabah6.getAccountNumber(), 600.0);
-        TransactionModel transaction7 = new TransactionModel(TransactionType.DEPOSIT, nasabah7.getAccountNumber(), 700.0);
+        // Create TransactionModel objects for all customers and add them to the transactionList
+        TransactionModel transaction1 = new TransactionModel(TransactionType.DEPOSIT, "1234567890", 500.0);
+        transactionList.add(transaction1);
+        TransactionModel transaction2 = new TransactionModel(TransactionType.WITHDRAW, "2345678901", 100.0);
+        transactionList.add(transaction2);
+        TransactionModel transaction3 = new TransactionModel(TransactionType.TRANSFER, "3456789012", 200.0);
+        transactionList.add(transaction3);
+        TransactionModel transaction4 = new TransactionModel(TransactionType.DEPOSIT, "4567890123", 300.0);
+        transactionList.add(transaction4);
+        TransactionModel transaction5 = new TransactionModel(TransactionType.WITHDRAW, "5678901234", 400.0);
+        transactionList.add(transaction5);
+        TransactionModel transaction6 = new TransactionModel(TransactionType.TRANSFER, "6789012345", 600.0);
+        transactionList.add(transaction6);
+        TransactionModel transaction7 = new TransactionModel(TransactionType.DEPOSIT, "7890123456", 700.0);
+        transactionList.add(transaction7);
 
-        // Membuat objek TransactionAbortModel untuk semua nasabah
-        TransactionAbortModel abort1 = new TransactionAbortModel("Abort Transaction", nasabah1.getAccountNumber(), nasabah2.getAccountNumber(), "Abort withdrawal transaction", transaction1);
-        TransactionAbortModel abort2 = new TransactionAbortModel("Abort Transaction", nasabah2.getAccountNumber(), nasabah3.getAccountNumber(), "Abort transfer transaction", transaction2);
-        TransactionAbortModel abort3 = new TransactionAbortModel("Abort Transaction", nasabah3.getAccountNumber(), nasabah4.getAccountNumber(), "Abort withdrawal transaction", transaction3);
-        TransactionAbortModel abort4 = new TransactionAbortModel("Abort Transaction", nasabah4.getAccountNumber(), nasabah5.getAccountNumber(), "Abort deposit transaction", transaction4);
-        TransactionAbortModel abort5 = new TransactionAbortModel("Abort Transaction", nasabah5.getAccountNumber(), nasabah6.getAccountNumber(), "Abort transfer transaction", transaction5);
-        TransactionAbortModel abort6 = new TransactionAbortModel("Abort Transaction", nasabah6.getAccountNumber(), nasabah7.getAccountNumber(), "Abort withdrawal transaction", transaction6);
-        TransactionAbortModel abort7 = new TransactionAbortModel("Abort Transaction", nasabah7.getAccountNumber(), nasabah1.getAccountNumber(), "Abort transfer transaction", transaction7);
 
         Scanner scanner = new Scanner(System.in);
 
@@ -52,8 +52,8 @@ public class Main {
             System.out.println("\n=== Menu ===");
             System.out.println("1. Login Nasabah");
             System.out.println("2. Login Admin");
-            System.out.println("3. Exit");
-            System.out.println("4. Daftar Jadi Nasabah");
+            System.out.println("3. Daftar Jadi Nasabah");
+            System.out.println("4. Exit");
             System.out.print("Masukkan pilihan Anda: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Membersihkan buffer
@@ -65,10 +65,10 @@ public class Main {
                 case 2:
                     loginAdminMenu(admin,scanner);
                     break;
-                case 3:
+                case 4:
                     exit = true;
                     break;
-                case 4:
+                case 3:
                     registerNasabahMenu(nasabahController, scanner);
                     break;
                 default:
@@ -83,6 +83,7 @@ public class Main {
         String name = scanner.nextLine();
         System.out.print("Masukkan nomor akun: ");
         String accountNumber = scanner.nextLine();
+
         if (nasabahController.validateNasabahAccountNumber(accountNumber)){
             System.out.println("Nomor akun sudah ada");
             return;
@@ -149,41 +150,102 @@ public class Main {
             System.out.println("5. Ubah Nama");
             System.out.println("6. Data Nasabah");
             System.out.println("7. Batalkan Transaksi");
-            System.out.println("8. Logout");
+            System.out.println("8. Buat Laporan Ke Mimin");
+            System.out.println("9. Lihat Daftar Transaksi");
+            System.out.println("10. Cek Hasil Akhir Pembatalan");
+            System.out.println("11. Lihat Notifikasi");
+            System.out.println("12. Logout");
             System.out.print("Masukkan pilihan Anda: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
 
             switch (choice) {
                 case 1:
-                    System.out.println("Saldo Anda saat ini: " + nasabah.getBalance());
+                    // Call the function for the first option
+                    System.out.println();
+                    System.out.println("Saldo Anda: " + nasabah.getBalance());
+                    System.out.println();
                     break;
                 case 2:
+                    // Call the function for the second option
                     transferMenu(nasabah, nasabahController, scanner);
                     break;
                 case 3:
+                    // Call the function for the third option
                     depositMenu(nasabah, nasabahController, scanner);
                     break;
                 case 4:
+                    // Call the function for the fourth option
                     tarikDanaMenu(nasabah, nasabahController, scanner);
                     break;
                 case 5:
+                    // Call the function for the fifth option
                     ubahNamaMenu(nasabah, nasabahController, scanner);
                     break;
                 case 6:
-                    nasabahController.printNasabahInfo(nasabah.getAccountNumber());
+                    // Call the function for the sixth option
+                    System.out.println();
+                    nasabahController.showNasabahData(nasabah.getAccountNumber());
+                    System.out.println();
                     break;
                 case 7:
-                    laporanMenu(scanner, nasabahController, nasabah);
+                    // Call the function for the seventh option
+                    batalkanTransaksiMenuNasabah(scanner, nasabahController, nasabah);
                     break;
                 case 8:
-                    System.out.println("Logout berhasil.");
+                    // Call the function for the eighth option
+                    buatLaporanMenu(scanner, nasabah);
+                    break;
+                case 9:
+                    lihatTransaksiMenu(scanner, nasabah, nasabahController);
+                    // Call the function for the ninth option
+                    break;
+                case 10:
+                    System.out.println();
+                    nasabahController.showTransactionAbortSucces(nasabah.getAccountNumber());
+                    System.out.println();
+                    // Call the function for the tenth option
+                    break;
+                case 11:
+                    nasabahController.showAllTransaction(nasabah.getAccountNumber());
+                    // Call the function for the eleventh option
+                    break;
+                case 12:
                     exit = true;
+                    // Call the function for the twelfth option
                     break;
                 default:
-                    System.out.println("Pilihan tidak valid.");
+                    System.out.println("Invalid choice. Please enter a number between 1 and 12.");
+                    break;
             }
+
+           
         }
+    }
+
+    public static void batalkanTransaksiMenuNasabah(Scanner scanner, NasabahController nasabahController, NasabahModel nasabah){
+        System.out.println("Masukkan nomor transaksi yang ingin dibatalkan: ");
+        String id = scanner.nextLine();
+        System.out.println("Masukkan alasan pembatalan: ");
+        String reason = scanner.nextLine();
+
+        nasabahController.cancelTransaction(nasabah.getAccountNumber(), id, reason);
+        System.out.println("Cancel sedang admin proses mohon di tunggu...");
+    }
+
+    private static void lihatTransaksiMenu(Scanner scanner, NasabahModel nasabah, NasabahController nasabahController){
+        System.out.println();
+    }
+
+    
+    public static void buatLaporanMenu(Scanner scanner, NasabahModel nasabah){
+        System.out.println("Masukkan judul laporan: ");
+        String title = scanner.nextLine();
+        System.out.println("Masukkan alasan pembatalan: ");
+        String reason = scanner.nextLine();
+
+        laporanList.add(new LaporanModel(nasabah.getAccountNumber(), title, reason));
+        System.out.println("Cancel sedang admin proses mohon di tunggu...");
     }
 
     public static void depositMenu(NasabahModel nasabah, NasabahController nasabahController, Scanner scanner){
@@ -219,7 +281,7 @@ public class Main {
         double amount = scanner.nextDouble();
         scanner.nextLine(); // Membersihkan buffer
 
-        boolean success = nasabahController.withdraw(nasabah.getAccountNumber(), amount);
+        boolean success = nasabahController.withDraw(nasabah.getAccountNumber(), amount);
         if (success) {
             System.out.println("Penarikan berhasil.");
         } else {
@@ -231,7 +293,7 @@ public class Main {
         System.out.print("Masukkan nama baru: ");
         String newName = scanner.nextLine();
 
-        boolean success = nasabahController.changeName(nasabah, newName);
+        boolean success = nasabahController.changeName(nasabah.getAccountNumber(), newName);
         if (success) {
             System.out.println("Nama berhasil diubah.");
         } else {
@@ -239,25 +301,6 @@ public class Main {
         }
     }
 
-    private static void cancelTransaction(NasabahController nasabah,Scanner scanner,AdminController adminController, String accountNumberToCancel){
-        LaporanModel laporanToCancel = adminController.findReport(accountNumberToCancel);
-        if (laporanToCancel != null) {
-            adminController.cancelTransaction(laporanToCancel);
-            System.out.println("Transaksi berhasil dibatalkan.");
-        } else {
-            System.out.println("Laporan tidak ditemukan.");
-        }
-
-    }
-
-    private static void laporanMenu(Scanner scanner, NasabahController nasabahController, NasabahModel nasabah){
-        System.out.print("Masukkan nomor akun peneerima pada transaksi yang akan dibatalkan: ");
-        String accountNumberToCancel = scanner.nextLine();
-        System.out.println("Alasan Pembatalan: ");
-        String reason = scanner.nextLine();
-        laporanList.add(new LaporanModel("Batalkan Trasaksi", nasabah.getAccountNumber(), accountNumberToCancel, reason, 100.0));
-        System.out.println("Cancel sedang admin proses mohon di tunggu...");
-    }
 
     public static void adminMenu(AdminController admin, Scanner scanner){
 
@@ -267,95 +310,65 @@ public class Main {
             System.out.println("1. Lihat semua akun pengguna");
             System.out.println("2. Lihat semua transaksi");
             System.out.println("3. Lihat semua laporan");
-            System.out.println("4. Ubah status laporan");
-            System.out.println("5. Batalkan transaksi");
-            System.out.println("6. Hapus akun nasabah");
+            System.out.println("4. Lihat semua permintaan permbatalan");
+            System.out.println("5. Banned akun nasabah");
+            System.out.println("6. Batalkan transaksi");
             System.out.println("7. Hapus laporan");
-            System.out.println("8. Hapus transaksi");
-            System.out.println("9. Hapus semua transaksi");
-            System.out.println("10. Hapus semua laporan");
-            System.out.println("11. Hapus semua akun nasabah");
-            System.out.println("12. Hapus semua data");
-            System.out.println("13. Keluar");
+            System.out.println("8. Hapus semua laporan");
+            System.out.println("9. Logout");
             System.out.print("Masukkan pilihan Anda: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Membersihkan buffer
 
             switch (choice) {
                 case 1:
-                    System.out.println("Daftar akun nasabah:");
-                    System.out.println();
-                    admin.showAllUserAccount();
-
+                    admin.showAllNasabah();
                     break;
                 case 2:
                     admin.showAllTransaction();
                     break;
                 case 3:
-                    admin.showAllReport();
+                    admin.showAllLaporan();
                     break;
                 case 4:
-                    System.out.print("Masukkan nomor akun laporan: ");
-                    String accountNumber = scanner.nextLine();
-                    System.out.print("Apakah laporan sukses? (true/false): ");
-                    boolean success = scanner.nextBoolean();
-                    scanner.nextLine(); // Membersihkan buffer
-                    admin.ubahStatusLaporan(accountNumber, success);
+                    admin.showAllTransactionAbort();
                     break;
                 case 5:
-                    System.out.println("Masukkan nomor akun transaksi yang akan dibatalkan: ");
-                    String accountNumberToCancel = scanner.nextLine();
-                    LaporanModel laporanToCancel = admin.findReport(accountNumberToCancel);
-                    if (laporanToCancel != null) {
-                        admin.cancelTransaction(laporanToCancel);
-                        System.out.println("Transaksi berhasil dibatalkan.");
-                    } else {
-                        System.out.println("Laporan tidak ditemukan.");
+                    System.out.println("Fungsi ini masih dalam pengembangan");
+                break;
+                case 6:
+                    System.out.print("Menu Pembatalan Transaksi ");
+                    System.out.println("Masukkan nomor akun: ");
+                    String accountNumber = scanner.nextLine();
+                    System.out.println("Pilih status pembatalan: ");
+                    System.out.println("1. Ditolak");
+                    System.out.println("2. Diterima");
+                    int status = scanner.nextInt();
+                    if (status == 1) {
+                        admin.rejectAbortTransaction(accountNumber);
+                    } if (status == 2) {
+                        admin.cancelTransaction(accountNumber);
                     }
                     break;
-                case 6:
-                    System.out.print("Masukkan nomor akun nasabah yang akan dihapus: ");
-                    String accountNumberToDelete = scanner.nextLine();
-                    admin.deleteNasabahAccount(accountNumberToDelete);
-                    System.out.println("Akun nasabah berhasil dihapus.");
-                    break;
                 case 7:
-                    System.out.print("Masukkan nomor akun laporan yang akan dihapus: ");
-                    String reportNumberToDelete = scanner.nextLine();
-                    admin.deleteReport(reportNumberToDelete);
-                    System.out.println("Laporan berhasil dihapus.");
+                    // Implement logic for deleting report
+                    System.out.println("Fungsi ini masih dalam pengembangan");
                     break;
                 case 8:
-                    System.out.print("Masukkan nomor akun transaksi yang akan dihapus: ");
-                    String transactionNumberToDelete = scanner.nextLine();
-                    admin.deleteTransaction(transactionNumberToDelete);
-                    System.out.println("Transaksi berhasil dihapus.");
+                    // Implement logic for deleting all reports
+                    System.out.println("Fungsi ini masih dalam pengembangan");
                     break;
                 case 9:
-                    admin.deleteAllTransaction();
-                    System.out.println("Semua transaksi berhasil dihapus.");
-                    break;
-                case 10:
-                    admin.deleteAllReport();
-                    System.out.println("Semua laporan berhasil dihapus.");
-                    break;
-                case 11:
-                    admin.deleteAllNasabah();
-                    System.out.println("Semua akun nasabah berhasil dihapus.");
-                    break;
-                case 12:
-                    admin.deleteAll();
-                    System.out.println("Semua data berhasil dihapus.");
-                    break;
-                case 13:
+                    System.out.println("Logout berhasil.");
                     exit = true;
                     break;
                 default:
-                    System.out.println("Pilihan tidak valid.");
+                    System.out.println("Pilihan tidak valid. Silakan pilih lagi.");
+                    break;
             }
         }
 
         scanner.close();
     }
-    }
+}
 

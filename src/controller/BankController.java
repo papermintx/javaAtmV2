@@ -20,6 +20,8 @@ public class BankController {
 
     public AdminModel admin = new AdminModel("mimin", "admin", "admin");
 
+
+
     public NotificationModel findNotification(String accountNumber) {
         for (NotificationModel notificationModel : notificationList) {
             if (notificationModel.getAccountNumber().equals(accountNumber)) {
@@ -30,7 +32,7 @@ public class BankController {
     }
 
 
-    public NasabahModel findNasabah(String accountNumber) {
+    public static NasabahModel findNasabah(String accountNumber) {
         for (NasabahModel nasabahModel : nasabahList) {
             if (nasabahModel.getAccountNumber().equals(accountNumber)) {
                 return nasabahModel;
@@ -49,7 +51,7 @@ public class BankController {
     }
 
 
-    public TransactionAbortModel findTransactionAbort(String accountNumber) {
+    public static TransactionAbortModel findTransactionAbort(String accountNumber) {
         for (TransactionAbortModel transactionAbortModel : transactionAbortList) {
             if (transactionAbortModel.getAccountNumber().equals(accountNumber)) {
                 return transactionAbortModel;
@@ -67,14 +69,16 @@ public class BankController {
         return null;
     }
 
-    protected TransactionModel findTransaction(String accountNumber) {
+    public TransactionModel findTransaction(String id, String accountNumber) {
         for (TransactionModel transactionModel : transactionList) {
-            if (transactionModel.getAccountNumber().equals(accountNumber)) {
+            if (transactionModel.getId().equals(id) && transactionModel.getAccountNumber().equals(accountNumber)) {
                 return transactionModel;
             }
         }
         return null;
     }
+
+
 
     public void addTransaction(TransactionModel transactionModel) {
         transactionList.add(transactionModel);

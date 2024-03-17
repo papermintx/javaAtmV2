@@ -1,8 +1,7 @@
 package models;
 
 public enum AbortTransactionStatus {
-    SUCCES,
     PENDING,
-    CANCELED,
+    ACCEPTED,
     REJECTED,   
 }

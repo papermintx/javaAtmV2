@@ -33,7 +33,7 @@ public class AdminController extends BankController {
         for (TransactionModel transaction : transactionList) {
             System.out.println();
             System.out.println(transaction.getAccountNumber() + " - " + transaction.getAmount());
-            System.out.println("Status: " + transaction.getType());
+            System.out.println("Jenis Transaksi: " + transaction.getType());
             System.out.println();
         }
     }
@@ -59,43 +59,31 @@ public class AdminController extends BankController {
         }
     }
 
-    public void cancelTransaction(String accountNumber, AbortTransactionStatus status) {
-        TransactionModel transaction = findTransaction(accountNumber);
+    public void cancelTransaction(String accountNumber) {
         TransactionAbortModel transactionAbort = findTransactionAbort(accountNumber);
-        if (transaction.getType() == TransactionType.DEPOSIT) {
-            notificationList.add(new NotificationModel(accountNumber, notificationTemplate.get("deposit")));
-            findNasabah(accountNumber).setBalance(-transaction.getAmount());
-        } else if (transaction.getType() == TransactionType.TRANSFER) {
-            notificationList.add(new NotificationModel(transactionAbort.getAccountNumber(), notificationTemplate.get("transfer")));
-            findNasabah(accountNumber).setBalance(transaction.getAmount());
-            findNasabah(transactionAbort.getAccountNumberReported()).setBalance(-transaction.getAmount());
-        }
-
-        transactionAbort.setStatus(status);
-        transaction.setType(TransactionType.CANCEL);
+        transactionAbort.setStatus(AbortTransactionStatus.ACCEPTED);
+        String id = transactionAbort.getTransactionModel().getId();
+        findTransaction(id,accountNumber);
+        TransactionModel transaction = findTransaction(id,accountNumber);
+        transactionList.remove(findTransaction(id,accountNumber));
+        transactionList.remove(findTransaction(id,transaction.getAccountNumberTarget()));
         abortTransactionSucces.add(transactionAbort);
-
-        for (TransactionModel transactionModel : transactionList) {
-            if (transactionModel.getAccountNumber().equals(accountNumber)) {
-                transactionList.remove(transactionModel);
-                break;
-            }
-        }
+        notificationList.add(new NotificationModel(accountNumber, notificationTemplate.get(transaction.getType().toString().toLowerCase())));
+        notificationList.add(new NotificationModel(transaction.getAccountNumberTarget(), notificationTemplate.get(transaction.getType().toString().toLowerCase())));
     }
 
     public void rejectAbortTransaction(String accountNumber) {
+        System.out.println("Transaksi Sedang Ditolak...");
         TransactionAbortModel transactionAbort = findTransactionAbort(accountNumber);
+        if (transactionAbort == null) {
+            System.out.println("Transaksi tidak ditemukan");
+            return;
+        }
         transactionAbort.setStatus(AbortTransactionStatus.REJECTED);
         abortTransactionSucces.add(transactionAbort);
         notificationList.add(new NotificationModel(accountNumber, notificationTemplate.get("rejected")));
-        for (TransactionModel transactionModel : transactionList) {
-            if (transactionModel.getAccountNumber().equals(accountNumber)) {
-                transactionList.remove(transactionModel);
-                break;
-            }
-        }
+        transactionAbortList.remove(transactionAbort);
     }
-
 
     public AdminModel login(String username, String password) {
         if (admin.getUsername().equals(username) && admin.getPassword().equals(password)) {
@@ -110,21 +98,5 @@ public class AdminController extends BankController {
         laporanList.remove(laporan);
     }
 
-    public void deleteTransaction(String accountNumber) {
-        TransactionModel transaction = findTransaction(accountNumber);
-        transactionList.remove(transaction);
-    }
-
-    public void deleteAllTransaction() {
-        transactionList.clear();
-    }
-
-    public void deleteAllReport() {
-        laporanList.clear();
-    }
-
-    public void deleteAllNasabah() {
-        nasabahList.clear();
-    }
 
 }

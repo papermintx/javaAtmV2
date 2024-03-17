@@ -11,6 +11,7 @@ public class LaporanModel {
         this.content = content;
     }
 
+
     public String getAccountNumber() {
         return accountNumber;
     }

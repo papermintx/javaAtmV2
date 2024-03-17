@@ -2,6 +2,7 @@ package controller;
 
 import models.NasabahModel;
 import models.NotificationModel;
+import models.TransactionAbortModel;
 import models.TransactionModel;
 import models.TransactionType;
 
@@ -48,11 +49,11 @@ public class NasabahController extends BankController {
         if (sender != null && receiver != null && sender.getBalance() >= amount) {
             for (NasabahModel nasabahModel : nasabahList) {
                 if (nasabahModel.getAccountNumber().equals(senderAccountNumber)) {
-                    transactionList.add(new TransactionModel(TransactionType.TRANSFER, receiverAccountNumber, amount));
+                    transactionList.add(new TransactionModel(TransactionType.TRANSFER, receiverAccountNumber, senderAccountNumber, amount));
                     nasabahModel.setBalance(-amount);
                 }
                 if (nasabahModel.getAccountNumber().equals(receiverAccountNumber)) {
-                    transactionList.add(new TransactionModel(TransactionType.RECEIVED, senderAccountNumber, amount));
+                    transactionList.add(new TransactionModel(TransactionType.RECEIVED, senderAccountNumber, receiverAccountNumber, amount));
                     nasabahModel.setBalance(amount);
                 }
             }
@@ -61,13 +62,36 @@ public class NasabahController extends BankController {
         return false;
     }
 
+    public void cancelTransaction(String accountNumber, String idTransaction, String content) {
+        System.out.println("Pembatalan Transaksi Sedang Diproses...");
+        if (findTransaction(idTransaction, accountNumber) == null) {
+            System.out.println("Transaksi tidak ditemukan");
+            return;
+        }
+        if (findTransaction(idTransaction, accountNumber).getType().equals(TransactionType.DEPOSIT)) {
+            System.out.println("Transaksi deposit tidak dapat dibatalkan");
+            return;
+        }
+        TransactionModel transaction = findTransaction(idTransaction, accountNumber);
+        transactionAbortList.add(new TransactionAbortModel("Pembatalan Transaksi", accountNumber, content, transaction));
+    }
+
+
     public void showNasabahData(String accountNumber) {
         NasabahModel nasabah = findNasabah(accountNumber);
+        NotificationModel notification = findNotification(accountNumber);
         if (nasabah != null) {
+            System.out.println();
             System.out.println("Nama: " + nasabah.getName());
             System.out.println("Nomor Rekening: " + nasabah.getAccountNumber());
             System.out.println("Saldo: " + nasabah.getBalance());
+            if (notification != null) {
+                System.out.println("Notifikasi: " + notification.getTitle());
+                System.out.println("Isi: " + notification.getContent());
+            }
+            System.out.println();
             return;
+            
         }
         System.out.println("Data Nasabah Tidak Ditemukan");
     } 
@@ -85,8 +109,84 @@ public class NasabahController extends BankController {
 
     public void showNotification(String accountNumber){
         NotificationModel notification = findNotification(accountNumber);
-        System.out.println("");
+        if (notification != null) {
+            System.out.println("Notifikasi untuk akun: " + notification.getAccountNumber());
+            System.out.println("Judul: " + notification.getTitle());
+            System.out.println("Isi: " + notification.getContent());
+            return; 
+        }
+        System.out.println("Notification Kosong Gan...");
+    }
 
+    public void showAbortTransaction(String accountNumber) {
+        TransactionAbortModel transaction = findTransactionAbort(accountNumber);
+        if (transaction != null) {
+            System.out.println("Transaksi yang dibatalkan untuk akun: " + transaction.getAccountNumber());
+            System.out.println("Judul: " + transaction.getTitle());
+            System.out.println("Isi: " + transaction.getContent());
+            System.out.println("Status: " + transaction.getStatus());
+
+            return;
+        }
+        System.out.println("Transaksi yang dibatalkan Kosong Gan...");
+    }
+
+
+    public void showNotificationSucces(String accountNumber) {
+        NotificationModel notification = findNotification(accountNumber);
+        if (notification != null) {
+            System.out.println("Notifikasi untuk akun: " + notification.getAccountNumber());
+            System.out.println("Judul: " + notification.getTitle());
+            System.out.println("Isi: " + notification.getContent());
+            return;
+        }
+        System.out.println("Notification Kosong Gan...");
+    }
+
+    public void showTransactionAbortSucces(String accountNumber) {
+        TransactionAbortModel transaction = findTransactionAbortSucces(accountNumber);
+        if (transaction != null) {
+            System.out.println("Transaksi yang dibatalkan untuk akun: " + transaction.getAccountNumber());
+            System.out.println("Judul: " + transaction.getTitle());
+            System.out.println("Isi: " + transaction.getContent());
+            System.out.println("Status: " + transaction.getStatus());
+
+            return;
+        }
+        System.out.println("Transaksi yang dibatalkan Kosong Gan...");
+    }
+
+
+    public  void showAllTransaction(String accountNumber) {
+        for (TransactionModel transactionModel : transactionList) {
+            if (transactionModel.getAccountNumber().equals(accountNumber)) {
+                if (transactionModel.getType().equals(TransactionType.TRANSFER)){
+                    System.out.println();
+                    System.out.println("Transaksi: " + transactionModel.getType());
+                    System.out.println("Nomor Identifikasi: " + transactionModel.getId());
+                    System.out.println("Nomor Rekening Tujuan: " + transactionModel.getAccountNumberTarget());
+                    System.out.println("Nomor Rekening: " + transactionModel.getAccountNumber());
+                    System.out.println("Jumlah: " + transactionModel.getAmount());
+                    System.out.println();
+                    continue;
+                }
+                if (transactionModel.getType().equals(TransactionType.RECEIVED)){
+                    System.out.println();
+                    System.out.println("Transaksi: " + transactionModel.getType());
+                    System.out.println("Nomor Identifikasi: " + transactionModel.getId());
+                    System.out.println("Nomor Rekening Pengirim: " + transactionModel.getAccountNumberTarget());
+                    System.out.println("Nomor Rekening: " + transactionModel.getAccountNumber());
+                    System.out.println("Jumlah: " + transactionModel.getAmount());
+                    System.out.println();
+                    continue;
+                }
+                System.out.println();
+                System.out.println("Transaksi: " + transactionModel.getType());
+                System.out.println("Nomor Rekening: " + transactionModel.getAccountNumber());
+                System.out.println("Jumlah: " + transactionModel.getAmount());
+                System.out.println();
+            }
+        }
     }
 
 
