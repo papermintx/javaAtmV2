@@ -51,6 +51,7 @@ public class NasabahController extends BankController {
                 if (nasabahModel.getAccountNumber().equals(senderAccountNumber)) {
                     transactionList.add(new TransactionModel(TransactionType.TRANSFER, receiverAccountNumber, senderAccountNumber, amount));
                     nasabahModel.setBalance(-amount);
+                    continue;
                 }
                 if (nasabahModel.getAccountNumber().equals(receiverAccountNumber)) {
                     transactionList.add(new TransactionModel(TransactionType.RECEIVED, senderAccountNumber, receiverAccountNumber, amount));

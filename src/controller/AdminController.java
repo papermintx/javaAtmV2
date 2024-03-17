@@ -32,6 +32,7 @@ public class AdminController extends BankController {
     public void showAllTransaction() {
         for (TransactionModel transaction : transactionList) {
             System.out.println();
+            System.out.println("Nama :" + findNasabah(transaction.getAccountNumber()).getName());
             System.out.println(transaction.getAccountNumber() + " - " + transaction.getAmount());
             System.out.println("Jenis Transaksi: " + transaction.getType());
             System.out.println();
@@ -39,11 +40,13 @@ public class AdminController extends BankController {
     }
 
     public void showAllTransactionAbort() {
-        for (TransactionModel transaction : transactionList) {
+        for (TransactionAbortModel abortModel : transactionAbortList) {
             System.out.println();
-            System.out.println(findNasabah(transaction.getAccountNumber()).getName() + " - " + transaction.getAmount());
-            System.out.println("Account Number: " + transaction.getAccountNumber());
-            System.out.println("Status: " + transaction.getType());
+            System.out.println("Name :" + findNasabah(abortModel.getAccountNumber()).getName());
+            System.out.println("Account Number :" + abortModel.getAccountNumber());
+            System.out.println("Judul :" + abortModel.getTitle());
+            System.out.println("nomor transaksi :" + abortModel.getTransactionModel().getId());
+            System.out.println("Isi :" + abortModel.getContent());
             System.out.println();
         }
     }
@@ -60,6 +63,10 @@ public class AdminController extends BankController {
     }
 
     public void cancelTransaction(String accountNumber) {
+        if (findTransactionAbort(accountNumber) != null) {
+            System.out.println("Pengajuan Transaksi Tidak Ada");
+            return;
+        }
         TransactionAbortModel transactionAbort = findTransactionAbort(accountNumber);
         transactionAbort.setStatus(AbortTransactionStatus.ACCEPTED);
         String id = transactionAbort.getTransactionModel().getId();

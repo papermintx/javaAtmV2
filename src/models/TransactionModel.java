@@ -3,7 +3,6 @@ package models;
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 public class TransactionModel {
     private final String id;
@@ -11,6 +10,7 @@ public class TransactionModel {
     private final String accountNumber;
     private final String accountNumberTarget;
     private final double amount;
+    private static final String FILENAME = "used_ids.txt";
 
     public TransactionModel(TransactionType transactionType, String accountNumber, String accountNumberTarget, double amount) {
         this.accountNumberTarget = accountNumberTarget;
@@ -55,45 +55,49 @@ public class TransactionModel {
     private String generateUniqueId() {
         String newId;
         do {
-            newId = UUID.randomUUID().toString();
+            newId = generateRandomId();
         } while (isIdExists(newId));
         saveId(newId);
         return newId;
     }
 
+    private String generateRandomId() {
+        // Generate a random ID using a combination of letters and numbers
+        StringBuilder builder = new StringBuilder();
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        int length = 8; // Length of the ID
+        for (int i = 0; i < length; i++) {
+            int index = (int) (Math.random() * characters.length());
+            builder.append(characters.charAt(index));
+        }
+        return builder.toString();
+    }
+
     private boolean isIdExists(String id) {
-        // Check if the ID exists in the static list or file
-        // In this example, let's assume we're using a static list
-        return TransactionIdGenerator.getInstance().isIdExists(id);
+        Set<String> usedIds = loadUsedIds();
+        return usedIds.contains(id);
     }
 
     private void saveId(String id) {
-        // Save the ID to the static list or file
-        // In this example, let's assume we're using a static list
-        TransactionIdGenerator.getInstance().addId(id);
-    }
-}
-
-class TransactionIdGenerator {
-    private static TransactionIdGenerator instance;
-    private static final String FILENAME = "used_ids.txt";
-    private final Set<String> usedIds;
-
-    private TransactionIdGenerator() {
-        usedIds = loadUsedIds();
-    }
-
-    public static synchronized TransactionIdGenerator getInstance() {
-        if (instance == null) {
-            instance = new TransactionIdGenerator();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILENAME, true))) {
+            writer.write(id);
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return instance;
     }
 
     private Set<String> loadUsedIds() {
         Set<String> ids = new HashSet<>();
-        // Load used IDs from file
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME))) {
+        File file = new File(FILENAME);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 ids.add(line.trim());
@@ -102,20 +106,5 @@ class TransactionIdGenerator {
             e.printStackTrace();
         }
         return ids;
-    }
-
-    public synchronized boolean isIdExists(String id) {
-        return usedIds.contains(id);
-    }
-
-    public synchronized void addId(String id) {
-        usedIds.add(id);
-        // Save updated used IDs to file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILENAME, true))) {
-            writer.write(id);
-            writer.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

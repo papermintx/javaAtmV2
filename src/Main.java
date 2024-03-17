@@ -235,6 +235,8 @@ public class Main {
 
     private static void lihatTransaksiMenu(Scanner scanner, NasabahModel nasabah, NasabahController nasabahController){
         System.out.println();
+        nasabahController.showAllTransaction(nasabah.getAccountNumber());
+        System.out.println();
     }
 
     
@@ -245,7 +247,7 @@ public class Main {
         String reason = scanner.nextLine();
 
         laporanList.add(new LaporanModel(nasabah.getAccountNumber(), title, reason));
-        System.out.println("Cancel sedang admin proses mohon di tunggu...");
+        System.out.println("Laporan sedang admin proses mohon di tunggu...");
     }
 
     public static void depositMenu(NasabahModel nasabah, NasabahController nasabahController, Scanner scanner){
@@ -367,8 +369,6 @@ public class Main {
                     break;
             }
         }
-
-        scanner.close();
     }
 }
 
