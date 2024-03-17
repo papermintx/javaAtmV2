@@ -6,6 +6,8 @@ public class NasabahModel {
     private final String pin;
     private double balance;
 
+    private boolean isBlocked = false;
+
     public NasabahModel(String name, String accountNumber, String pin, double balance) {
         this.name = name;
         this.accountNumber = accountNumber;
@@ -21,10 +23,12 @@ public class NasabahModel {
         this.name = name;
     }
 
+    public boolean isBlocked() {
+        return isBlocked;
+    }
 
-
-    public String getPin() {
-        return pin;
+    public void setBlocked(boolean isBlocked) {
+        this.isBlocked = isBlocked;
     }
 
     public String getAccountNumber() {

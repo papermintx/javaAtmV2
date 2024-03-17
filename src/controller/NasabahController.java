@@ -21,6 +21,10 @@ public class NasabahController extends BankController {
     public boolean changeName(String accountNumber, String newName) {
         System.out.println("Mengganti Nama Sedang Diproses...");
         NasabahModel nasabah = findNasabah(accountNumber);
+        if (nasabah != null && nasabah.isBlocked()) {
+            System.out.println("Akun Anda Sedang Diblokir");
+            return false;
+        }
         if (nasabah != null) {
             nasabah.setName(newName);
             return true;
@@ -32,6 +36,10 @@ public class NasabahController extends BankController {
     public boolean withDraw(String accountNumber, double amount) {
         System.out.println("Withdraw Sedang Diproses...");
         NasabahModel nasabah = findNasabah(accountNumber);
+        if (nasabah != null && nasabah.isBlocked()) {
+            System.out.println("Akun Anda Sedang Diblokir");
+            return false;
+        }
         if (nasabah != null && nasabah.getBalance() >= amount) {
             nasabah.setBalance(-amount);
             transactionList.add(new TransactionModel(TransactionType.WITHDRAW, accountNumber, amount));
@@ -44,17 +52,21 @@ public class NasabahController extends BankController {
         System.out.println("Transfer Sedang Diproses...");
 
         NasabahModel sender = findNasabah(senderAccountNumber);
+        if (sender != null && sender.isBlocked()) {
+            System.out.println("Akun Anda Sedang Diblokir");
+            return false;
+        }
         NasabahModel receiver = findNasabah(receiverAccountNumber);
 
         if (sender != null && receiver != null && sender.getBalance() >= amount) {
             for (NasabahModel nasabahModel : nasabahList) {
                 if (nasabahModel.getAccountNumber().equals(senderAccountNumber)) {
-                    transactionList.add(new TransactionModel(TransactionType.TRANSFER, receiverAccountNumber, senderAccountNumber, amount));
+                    transactionList.add(new TransactionModel(TransactionType.TRANSFER, senderAccountNumber, receiverAccountNumber, amount));
                     nasabahModel.setBalance(-amount);
                     continue;
                 }
                 if (nasabahModel.getAccountNumber().equals(receiverAccountNumber)) {
-                    transactionList.add(new TransactionModel(TransactionType.RECEIVED, senderAccountNumber, receiverAccountNumber, amount));
+                    transactionList.add(new TransactionModel(TransactionType.RECEIVED, receiverAccountNumber, senderAccountNumber, amount));
                     nasabahModel.setBalance(amount);
                 }
             }
@@ -64,10 +76,25 @@ public class NasabahController extends BankController {
     }
 
     public void cancelTransaction(String accountNumber, String idTransaction, String content) {
+        NasabahModel nasabahModel = findNasabah(accountNumber);
+        if (nasabahModel.isBlocked()) {
+            System.out.println("Akun Anda Sedang Diblokir");
+            System.out.println("Beberapa fitur tidak Bisa di gunakan!!");
+            return;
+        }
+        System.out.println("Pembatalan Transaksi Sedang Diproses...");
+        for (TransactionAbortModel transactionAbort : transactionAbortList){
+            if (transactionAbort.getAccountNumber().equals(accountNumber)){
+                System.out.println("Anda Sudah Mengajukan Pembatalan Transaksi Sebelumnya");
+                System.out.println("Tunggu Admin Untuk Memprosesnya");
+                return;
+            }
+        }
         System.out.println("Pembatalan Transaksi Sedang Diproses...");
         if (findTransaction(idTransaction, accountNumber) == null) {
             System.out.println("Transaksi tidak ditemukan");
             return;
+
         }
         if (findTransaction(idTransaction, accountNumber).getType().equals(TransactionType.DEPOSIT)) {
             System.out.println("Transaksi deposit tidak dapat dibatalkan");
@@ -98,9 +125,15 @@ public class NasabahController extends BankController {
     } 
 
     public boolean deposit(String accountNumber, double amount) {
+
         System.out.println("Deposit Sedang Diproses...");
         NasabahModel nasabah = findNasabah(accountNumber);
+
         if (nasabah != null) {
+            if (nasabah.isBlocked()){
+                System.out.println("Akun Anda Sedang Diblokir");
+                return false;
+            }
             nasabah.setBalance(amount);
             transactionList.add(new TransactionModel(TransactionType.DEPOSIT, accountNumber, amount));
             return true;

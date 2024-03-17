@@ -43,7 +43,6 @@ public class Main {
         TransactionModel transaction7 = new TransactionModel(TransactionType.DEPOSIT, "7890123456", 700.0);
         transactionList.add(transaction7);
 
-
         Scanner scanner = new Scanner(System.in);
 
         // Loop menu utama
@@ -132,6 +131,11 @@ public class Main {
 
         NasabahModel nasabah = nasabahController.nasabahLogin(accountNumber, pin);
         if (nasabah != null) {
+            if (nasabah.isBlocked()){
+                System.out.println("Akun Anda telah diblokir. Silakan hubungi admin.");
+                System.out.println("Beberapa fitur tidak bisa digunakan");
+                System.out.println("Anda bisa membuat laporan untuk pembukaan bokir ke admin");
+            }
             System.out.println("Login berhasil sebagai " + nasabah.getName() + ".");
             nasabahMenu(nasabah, nasabahController, scanner);
         } else {
@@ -141,6 +145,7 @@ public class Main {
 
     private static void nasabahMenu(NasabahModel nasabah, NasabahController nasabahController, Scanner scanner) {
         boolean exit = false;
+        boolean transactionAbort = false;
         while (!exit) {
             System.out.println("\n=== Nasabah Menu ===");
             System.out.println("1. Lihat Saldo");
@@ -189,7 +194,6 @@ public class Main {
                     System.out.println();
                     break;
                 case 7:
-                    // Call the function for the seventh option
                     batalkanTransaksiMenuNasabah(scanner, nasabahController, nasabah);
                     break;
                 case 8:
@@ -204,22 +208,17 @@ public class Main {
                     System.out.println();
                     nasabahController.showTransactionAbortSucces(nasabah.getAccountNumber());
                     System.out.println();
-                    // Call the function for the tenth option
                     break;
                 case 11:
-                    nasabahController.showAllTransaction(nasabah.getAccountNumber());
-                    // Call the function for the eleventh option
+                    nasabahController.showNotification(nasabah.getAccountNumber());
                     break;
                 case 12:
                     exit = true;
-                    // Call the function for the twelfth option
                     break;
                 default:
                     System.out.println("Invalid choice. Please enter a number between 1 and 12.");
                     break;
             }
-
-           
         }
     }
 
@@ -230,7 +229,6 @@ public class Main {
         String reason = scanner.nextLine();
 
         nasabahController.cancelTransaction(nasabah.getAccountNumber(), id, reason);
-        System.out.println("Cancel sedang admin proses mohon di tunggu...");
     }
 
     private static void lihatTransaksiMenu(Scanner scanner, NasabahModel nasabah, NasabahController nasabahController){
@@ -268,7 +266,7 @@ public class Main {
         String recipientAccountNumber = scanner.nextLine();
         System.out.print("Masukkan jumlah yang ingin ditransfer: ");
         double amount = scanner.nextDouble();
-        scanner.nextLine(); // Membersihkan buffer
+        scanner.nextLine();
 
         boolean success = nasabahController.transfer(nasabah.getAccountNumber(), recipientAccountNumber, amount);
         if (success) {
@@ -317,6 +315,7 @@ public class Main {
             System.out.println("6. Batalkan transaksi");
             System.out.println("7. Hapus laporan");
             System.out.println("8. Hapus semua laporan");
+            System.out.println("9. UnBanned akun nasabah");
             System.out.println("9. Logout");
             System.out.print("Masukkan pilihan Anda: ");
             int choice = scanner.nextInt();
@@ -336,7 +335,10 @@ public class Main {
                     admin.showAllTransactionAbort();
                     break;
                 case 5:
-                    System.out.println("Fungsi ini masih dalam pengembangan");
+                    System.out.println("Masukkan nomor akun: ");
+                    String accountNumberBanned = scanner.nextLine();
+                    admin.bannedNasabah(accountNumberBanned);
+
                 break;
                 case 6:
                     System.out.print("Menu Pembatalan Transaksi ");
@@ -353,14 +355,20 @@ public class Main {
                     }
                     break;
                 case 7:
-                    // Implement logic for deleting report
-                    System.out.println("Fungsi ini masih dalam pengembangan");
+                    admin.showAllLaporan();
+                    System.out.println("Masukkan nomor akun: ");
+                    String accountNumberLaporan = scanner.nextLine();
+                    admin.deleteLaporan(accountNumberLaporan);
                     break;
                 case 8:
-                    // Implement logic for deleting all reports
-                    System.out.println("Fungsi ini masih dalam pengembangan");
+                    admin.deleteAllLaporan(scanner);
                     break;
                 case 9:
+                    System.out.println("Masukkan nomor akun: ");
+                    String accountNumberUnBanned = scanner.nextLine();
+                    admin.unBannedNasabah(accountNumberUnBanned);
+                    break;
+                case 10:
                     System.out.println("Logout berhasil.");
                     exit = true;
                     break;

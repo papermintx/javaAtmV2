@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.Map;
+import java.util.Scanner;
 
 import models.AbortTransactionStatus;
 import models.AdminModel;
@@ -63,11 +64,12 @@ public class AdminController extends BankController {
     }
 
     public void cancelTransaction(String accountNumber) {
-        if (findTransactionAbort(accountNumber) != null) {
+        TransactionAbortModel transactionAbort = findTransactionAbort(accountNumber);
+        if (transactionAbort == null) {
             System.out.println("Pengajuan Transaksi Tidak Ada");
             return;
         }
-        TransactionAbortModel transactionAbort = findTransactionAbort(accountNumber);
+        transactionAbort = findTransactionAbort(accountNumber);
         transactionAbort.setStatus(AbortTransactionStatus.ACCEPTED);
         String id = transactionAbort.getTransactionModel().getId();
         findTransaction(id,accountNumber);
@@ -103,6 +105,39 @@ public class AdminController extends BankController {
         System.out.println("Laporan Sedang Dihapus...");
         LaporanModel laporan = findLaporan(accountNumber);
         laporanList.remove(laporan);
+    }
+
+    public void deleteAllLaporan(Scanner scanner) {
+        System.out.println("Apakah Anda Yakin Ingin Menghapus Semua Laporan? (Y/N)");
+        String confirmation = scanner.nextLine();
+        if (confirmation.equals("Y")) {
+            System.out.println("Semua Laporan Sedang Dihapus...");
+            laporanList.clear();
+            System.out.println("Semua Laporan Berhasil Dihapus");
+        }
+
+    }
+
+    public void bannedNasabah(String accountNumber) {
+        System.out.println("Nasabah Sedang Diblokir...");
+        NasabahModel nasabah = findNasabah(accountNumber);
+        if (nasabah == null) {
+            return;
+        }
+        nasabah.setBlocked(true);
+        notificationList.add(new NotificationModel(accountNumber, "Your account has been blocked"));
+        System.out.println("Nasabah Berhasil Diblokir");
+    }
+
+    public void unBannedNasabah(String accountNumber) {
+        System.out.println("Nasabah Sedang Dibuka...");
+        NasabahModel nasabah = findNasabah(accountNumber);
+        if (nasabah == null) {
+            return;
+        }
+        nasabah.setBlocked(false);
+        notificationList.add(new NotificationModel(accountNumber, "Your account has been unblocked"));
+        System.out.println("Nasabah Berhasil Dibuka");
     }
 
 

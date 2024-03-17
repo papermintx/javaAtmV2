@@ -20,8 +20,6 @@ public class BankController {
 
     public AdminModel admin = new AdminModel("mimin", "admin", "admin");
 
-
-
     public NotificationModel findNotification(String accountNumber) {
         for (NotificationModel notificationModel : notificationList) {
             if (notificationModel.getAccountNumber().equals(accountNumber)) {
